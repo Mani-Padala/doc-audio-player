@@ -53,17 +53,41 @@ function _showScreen(id) {
 // ═══════════════════════════════════════════════════════════════════
 const dropZone = $('dropZone');
 const fileInput = $('fileInput');
+let _pendingFile = null; // file selected but not yet processed
 
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
 dropZone.addEventListener('drop', e => {
   e.preventDefault();
   dropZone.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) _startProcessing(e.dataTransfer.files[0]);
+  if (e.dataTransfer.files[0]) _fileSelected(e.dataTransfer.files[0]);
 });
 fileInput.addEventListener('change', e => {
-  if (e.target.files[0]) _startProcessing(e.target.files[0]);
+  if (e.target.files[0]) _fileSelected(e.target.files[0]);
 });
+
+// Called when a file is picked — show it selected, enable Start button
+function _fileSelected(file) {
+  _pendingFile = file;
+
+  // Update drop zone UI
+  dropZone.classList.add('file-selected');
+  $('dropIcon').textContent = '✅';
+  $('dropTitle').textContent = file.name;
+  $('dropSub').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to process';
+  $('dropTypes').style.display = 'none';
+
+  // Enable start button
+  const btn = $('startBtn');
+  btn.textContent = 'Start →';
+  btn.disabled = false;
+  btn.classList.add('ready');
+}
+
+// Called by the Start button
+window.startFromButton = () => {
+  if (_pendingFile) _startProcessing(_pendingFile);
+};
 
 // API key — memory only, never persisted
 $('apiKeyInput').addEventListener('input', function () {
@@ -462,7 +486,20 @@ function _resetToUpload() {
   allItems     = [];
   explanations = {};
   isStreaming  = false;
+  _pendingFile = null;
   fileInput.value = '';
+
+  // Reset drop zone UI
+  dropZone.classList.remove('file-selected');
+  $('dropIcon').textContent  = '📄';
+  $('dropTitle').textContent = 'Drop your document here';
+  $('dropSub').textContent   = 'or click to browse';
+  $('dropTypes').style.display = '';
+  const btn = $('startBtn');
+  btn.textContent = 'Choose a file to continue';
+  btn.disabled = true;
+  btn.classList.remove('ready');
+
   clearAll();
   _resetSteps();
   _hideProcError();

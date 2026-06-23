@@ -91,6 +91,24 @@ body {
 .api-key-input.error { border-color: var(--red); }
 .api-key-note { font-size: 11px; color: var(--muted); }
 
+/* ── Start button ── */
+.start-btn {
+  width: 100%; max-width: 480px;
+  padding: 14px;
+  background: var(--accent);
+  border: none; border-radius: 12px;
+  color: white; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+.start-btn:hover:not(:disabled) { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 0 32px var(--accent-glow); }
+.start-btn:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; box-shadow: none; }
+.start-btn.ready { background: var(--accent); color: white; }
+
+.drop-zone.file-selected { border-color: var(--accent); background: var(--active-bg); }
+.drop-zone.file-selected .drop-icon { opacity: 1; }
+.file-name { font-size: 13px; color: var(--accent2); margin-top: 8px; font-weight: 500; }
+
 /* ── Processing ── */
 #processingScreen {
   flex-direction: column;
