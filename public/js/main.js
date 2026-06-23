@@ -7,6 +7,9 @@ import { readFile, chunkText } from './chunker.js';
 import { generateTOC, explainSection, answerQuestion, totalTokensUsed } from './ragClient.js';
 import { Player, WordHighlighter } from './player.js';
 
+document.addEventListener('DOMContentLoaded', () => {
+
+
 // ── Module-level state ────────────────────────────────────────────────────────
 let chunks      = [];
 let toc         = [];
@@ -580,3 +583,5 @@ function _fmt(s) {
 }
 
 function _tick(ms = 0) { return new Promise(r => setTimeout(r, ms)); }
+
+}); // end DOMContentLoaded
