@@ -7,9 +7,6 @@ import { readFile, chunkText } from './chunker.js';
 import { generateTOC, explainSection, answerQuestion, totalTokensUsed } from './ragClient.js';
 import { Player, WordHighlighter } from './player.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-
-
 // ── Module-level state ────────────────────────────────────────────────────────
 let chunks      = [];
 let toc         = [];
@@ -54,48 +51,49 @@ function _showScreen(id) {
 // ═══════════════════════════════════════════════════════════════════
 // UPLOAD & PROCESSING
 // ═══════════════════════════════════════════════════════════════════
-const dropZone = $('dropZone');
-const fileInput = $('fileInput');
-let _pendingFile = null; // file selected but not yet processed
+let _pendingFile = null;
 
-// ── Drag & drop onto the drop zone ───────────────────────────────────────────
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) _fileSelected(e.dataTransfer.files[0]);
-});
+// ── Wire all upload UI interactions after DOM is ready ───────────────────────
+window.addEventListener('load', () => {
+  const fileInput = $('fileInput');
+  const dropZone  = $('dropZone');
+  const startBtn  = $('startBtn');
 
-// ── Click "Browse files" label triggers the hidden file input ─────────────────
-// (the <label for="fileInput"> in HTML handles this natively)
-fileInput.addEventListener('change', e => {
-  if (e.target.files[0]) _fileSelected(e.target.files[0]);
-});
+  fileInput.addEventListener('change', function() {
+    const file = this.files && this.files[0];
+    if (file) _fileSelected(file);
+  });
 
-// ── Start button ──────────────────────────────────────────────────────────────
-$('startBtn').addEventListener('click', () => {
-  if (_pendingFile) _startProcessing(_pendingFile);
+  dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) _fileSelected(file);
+  });
+
+  startBtn.addEventListener('click', () => {
+    if (_pendingFile) _startProcessing(_pendingFile);
+  });
 });
 
 // Called when a file is picked — show it selected, enable Start button
 function _fileSelected(file) {
   _pendingFile = file;
 
-  // Update drop zone UI
-  dropZone.classList.add('file-selected');
-  $('dropIcon').textContent  = '✅';
-  $('dropTitle').textContent = file.name;
-  $('dropSub').textContent   = (file.size / 1024).toFixed(1) + ' KB — ready to process';
+  // Update drop zone UI — query fresh every time
+  $('dropZone').classList.add('file-selected');
+  $('dropIcon').textContent    = '✅';
+  $('dropTitle').textContent   = file.name;
+  $('dropSub').textContent     = (file.size / 1024).toFixed(1) + ' KB — ready to process';
   $('dropTypes').style.display = 'none';
 
-  // Enable start button
-  const btn = $('startBtn');
+  // Enable start button — query fresh every time
+  const btn = document.getElementById('startBtn');
   btn.textContent = '▶  Start processing';
-  btn.disabled = false;
+  btn.disabled    = false;
   btn.classList.add('ready');
-
-  // Scroll start button into view on mobile
   btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
@@ -502,14 +500,16 @@ function _resetToUpload() {
   _pendingFile = null;
   fileInput.value = '';
 
-  // Reset drop zone UI
-  dropZone.classList.remove('file-selected', 'drag-over');
+  // Reset drop zone UI — always query fresh
+  _pendingFile = null;
+  document.getElementById('dropZone').classList.remove('file-selected', 'drag-over');
   $('dropIcon').textContent    = '📄';
   $('dropTitle').textContent   = 'Drop your file here';
-  $('dropSub').textContent     = 'or click to browse';
+  $('dropSub').textContent     = 'or tap the button below';
   $('dropTypes').style.display = '';
-  fileInput.value              = '';
-  const btn = $('startBtn');
+  const fi = document.getElementById('fileInput');
+  if (fi) fi.value = '';
+  const btn = document.getElementById('startBtn');
   btn.textContent = 'Choose a file to continue';
   btn.disabled    = true;
   btn.classList.remove('ready');
@@ -584,4 +584,3 @@ function _fmt(s) {
 
 function _tick(ms = 0) { return new Promise(r => setTimeout(r, ms)); }
 
-}); // end DOMContentLoaded
