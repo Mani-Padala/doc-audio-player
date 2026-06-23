@@ -5,7 +5,7 @@
 const CHUNK_SIZE    = 700;  // target tokens per chunk (~500 words)
 const CHARS_PER_TOK = 4;
 
-// ── Load mammoth for .docx parsing (CDN, loaded on demand) ───────────────────
+// ── Load mammoth for .docx parsing (CDN, on demand) ──────────────────────────
 async function loadMammoth() {
   if (window.mammoth) return window.mammoth;
   await new Promise((res, rej) => {
@@ -18,14 +18,53 @@ async function loadMammoth() {
   return window.mammoth;
 }
 
+// ── Extract text from a PDF using PDF.js (dynamic import, CDN) ───────────────
+async function readPdf(file) {
+  const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+  const WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+
+  const pdfjsLib = await import(PDFJS_URL);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER_URL;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pages = [];
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items
+      .map(item => item.str)
+      .join(' ')
+      .replace(/  +/g, ' ')
+      .trim();
+    if (pageText) pages.push(pageText);
+  }
+
+  const fullText = pages.join('
+
+');
+  if (!fullText.trim()) {
+    throw new Error('PDF has no extractable text — it may be a scanned image. Try a text-based PDF.');
+  }
+  return fullText;
+}
+
 // ── Read file → raw text ──────────────────────────────────────────────────────
 export async function readFile(file) {
-  if (file.name.toLowerCase().endsWith('.docx')) {
+  const name = file.name.toLowerCase();
+
+  if (name.endsWith('.docx')) {
     const mammoth = await loadMammoth();
     const result  = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
     if (!result.value?.trim()) throw new Error('Document appears empty or could not be read.');
     return result.value;
   }
+
+  if (name.endsWith('.pdf')) {
+    return readPdf(file);
+  }
+
   // .txt / .md
   const text = await file.text();
   if (!text?.trim()) throw new Error('File appears empty.');

@@ -6,7 +6,7 @@ An AI-powered document player that reads your files aloud — section by section
 
 ## What it does
 
-- Upload a `.docx`, `.txt`, or `.md` file
+- Upload a `.docx`, `.pdf`, `.txt`, or `.md` file
 - The document gets chunked and a table of contents is generated automatically
 - Each section is explained conversationally using RAG (only relevant chunks are sent to the LLM)
 - Play, pause, skip sections — with word-level highlighting as it reads
@@ -56,7 +56,6 @@ node server.js
 ```
 
 You'll see:
-
 ```
 🎧  Doc Audio Player
 
@@ -156,12 +155,12 @@ All prompts are in `public/js/prompts.js`. Edit this file to change how the AI e
 
 ## Browser support
 
-| Browser | Explanation | Word highlight | Voice input | Voice output    |
-| ------- | ----------- | -------------- | ----------- | --------------- |
-| Chrome  | ✅          | ✅             | ✅          | ✅              |
-| Edge    | ✅          | ✅             | ✅          | ✅              |
-| Safari  | ✅          | ✅             | ✅          | ✅ (iOS voices) |
-| Firefox | ✅          | ✅             | ❌          | ⚠️ limited      |
+| Browser | Explanation | Word highlight | Voice input | Voice output |
+|---------|-------------|----------------|-------------|--------------|
+| Chrome  | ✅ | ✅ | ✅ | ✅ |
+| Edge    | ✅ | ✅ | ✅ | ✅ |
+| Safari  | ✅ | ✅ | ✅ | ✅ (iOS voices) |
+| Firefox | ✅ | ✅ | ❌ | ⚠️ limited |
 
 Chrome or Edge gives the best experience overall.
 
@@ -170,35 +169,33 @@ Chrome or Edge gives the best experience overall.
 ## Troubleshooting
 
 **App doesn't move past the upload screen**
-
 - Make sure you've entered your Groq API key before uploading
 - Check the browser console (F12) for error messages
 
 **"Groq error 401"**
-
 - Your API key is invalid or expired — generate a new one at [console.groq.com/keys](https://console.groq.com/keys)
 
 **"Groq error 429"**
-
 - You've hit the rate limit — wait 60 seconds and try again
 
 **Voice input not working**
-
 - Voice input requires Chrome or Edge
 - Make sure you've granted microphone permission when the browser asks
 
 **Audio not playing**
-
 - Some browsers require a user gesture before allowing audio — click anywhere on the page first
 - Check that your device volume is up and not muted
 
 **Render app takes long to load**
-
 - The free tier sleeps after 15 min — first request takes ~30s to wake up
 - Set up UptimeRobot (see above) to keep it awake
 
-**`.docx` file not reading correctly**
+**`.pdf` file not reading correctly**
+- The app uses PDF.js loaded from CDN — make sure you have internet access
+- Scanned/image-based PDFs won't work — only text-based PDFs can be extracted
+- If text looks garbled, the PDF may have unusual encoding
 
+**`.docx` file not reading correctly**
 - The app uses [mammoth.js](https://github.com/mwilliamson/mammoth.js) loaded from CDN — make sure you have internet access when uploading
 - Very complex formatting (tables, embedded images) may not extract perfectly — plain text content always works
 
@@ -206,13 +203,13 @@ Chrome or Edge gives the best experience overall.
 
 ## Tech stack
 
-| Layer           | Technology                                   |
-| --------------- | -------------------------------------------- |
-| Server          | Node.js (built-ins only, zero dependencies)  |
-| Frontend        | Vanilla JS ES modules                        |
-| LLM             | Groq API — LLaMA 3.3 70B                     |
-| RAG             | Keyword-scored chunk retrieval (client-side) |
-| TTS             | Web Speech API (browser built-in)            |
-| Voice input     | Web Speech Recognition API                   |
-| `.docx` parsing | mammoth.js (CDN)                             |
-| Hosting         | Render (free tier)                           |
+| Layer | Technology |
+|-------|------------|
+| Server | Node.js (built-ins only, zero dependencies) |
+| Frontend | Vanilla JS ES modules |
+| LLM | Groq API — LLaMA 3.3 70B |
+| RAG | Keyword-scored chunk retrieval (client-side) |
+| TTS | Web Speech API (browser built-in) |
+| Voice input | Web Speech Recognition API |
+| `.docx` parsing | mammoth.js (CDN) |
+| Hosting | Render (free tier) |
