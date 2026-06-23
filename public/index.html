@@ -15,33 +15,45 @@
     <h1>Doc Audio Player</h1>
     <p>Upload any document. Each section gets explained conversationally — then ask follow-up questions by typing or speaking.</p>
   </div>
-  <div class="drop-zone" id="dropZone">
-    <input type="file" id="fileInput" accept=".docx,.txt,.md,.pdf" autocomplete="off">
-    <div class="drop-icon" id="dropIcon">📄</div>
-    <div class="drop-title" id="dropTitle">Drop your document here</div>
-    <div class="drop-sub" id="dropSub">or click to browse</div>
-    <div class="drop-types" id="dropTypes">
-      <span class="type-badge">.docx</span>
-      <span class="type-badge">.pdf</span>
-      <span class="type-badge">.txt</span>
-      <span class="type-badge">.md</span>
+
+  <!-- Step 1: File -->
+  <div class="upload-step">
+    <div class="upload-step-label"><span class="step-num">1</span> Choose a document</div>
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".docx,.txt,.md,.pdf" autocomplete="off">
+      <div class="drop-icon" id="dropIcon">📄</div>
+      <div class="drop-title" id="dropTitle">Drop your file here</div>
+      <div class="drop-sub" id="dropSub">or click to browse</div>
+      <div class="drop-types" id="dropTypes">
+        <span class="type-badge">.docx</span>
+        <span class="type-badge">.pdf</span>
+        <span class="type-badge">.txt</span>
+        <span class="type-badge">.md</span>
+      </div>
     </div>
   </div>
 
-  <button class="start-btn" id="startBtn" disabled onclick="startFromButton()">
-    Choose a file to continue
-  </button>
-
-  <div class="api-key-section">
-    <div class="api-key-label">
-      <span>🔑</span>
-      <span>Groq API Key</span>
-      <a href="https://console.groq.com/keys" target="_blank">Get one free →</a>
+  <!-- Step 2: API Key -->
+  <div class="upload-step">
+    <div class="upload-step-label"><span class="step-num">2</span> Enter your Groq API key</div>
+    <div class="api-key-section">
+      <div class="api-key-label">
+        <a href="https://console.groq.com/keys" target="_blank">Get one free →</a>
+      </div>
+      <input type="password" id="apiKeyInput" class="api-key-input"
+             placeholder="gsk_..." autocomplete="new-password" spellcheck="false">
+      <div class="api-key-note">🔒 Memory only — never stored. Cleared on every page refresh.</div>
     </div>
-    <input type="password" id="apiKeyInput" class="api-key-input"
-           placeholder="gsk_..." autocomplete="new-password" spellcheck="false">
-    <div class="api-key-note">Memory only — never stored. Cleared on every page refresh.</div>
   </div>
+
+  <!-- Step 3: Start -->
+  <div class="upload-step">
+    <div class="upload-step-label"><span class="step-num">3</span> Process</div>
+    <button class="start-btn" id="startBtn" disabled>
+      Choose a file to continue
+    </button>
+  </div>
+
 </div>
 
 <!-- ═══════════ PROCESSING SCREEN ═══════════ -->

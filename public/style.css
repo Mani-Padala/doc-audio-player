@@ -62,7 +62,7 @@ body {
   position: relative;
 }
 .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: var(--active-bg); }
-.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
 .drop-icon  { font-size: 38px; margin-bottom: 14px; opacity: .6; }
 .drop-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
 .drop-sub   { font-size: 13px; color: var(--muted); }
@@ -74,8 +74,25 @@ body {
   background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
 }
 
+/* ── Upload steps ── */
+.upload-step {
+  width: 100%; max-width: 480px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.upload-step-label {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+}
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); color: white;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
 /* ── API Key ── */
-.api-key-section { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 8px; }
+.api-key-section { width: 100%; display: flex; flex-direction: column; gap: 8px; }
 .api-key-label   { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
 .api-key-label a { margin-left: auto; font-size: 12px; color: var(--accent2); text-decoration: none; }
 .api-key-label a:hover { text-decoration: underline; }
@@ -93,7 +110,7 @@ body {
 
 /* ── Start button ── */
 .start-btn {
-  width: 100%; max-width: 480px;
+  width: 100%;
   padding: 14px;
   background: var(--accent);
   border: none; border-radius: 12px;

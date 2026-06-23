@@ -72,22 +72,22 @@ function _fileSelected(file) {
 
   // Update drop zone UI
   dropZone.classList.add('file-selected');
-  $('dropIcon').textContent = '✅';
+  $('dropIcon').textContent  = '✅';
   $('dropTitle').textContent = file.name;
-  $('dropSub').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to process';
+  $('dropSub').textContent   = (file.size / 1024).toFixed(1) + ' KB — ready to process';
   $('dropTypes').style.display = 'none';
 
   // Enable start button
   const btn = $('startBtn');
-  btn.textContent = 'Start →';
+  btn.textContent = '▶  Start processing';
   btn.disabled = false;
   btn.classList.add('ready');
+
+  // Scroll start button into view on mobile
+  btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
-// Called by the Start button
-window.startFromButton = () => {
-  if (_pendingFile) _startProcessing(_pendingFile);
-};
+
 
 // API key — memory only, never persisted
 $('apiKeyInput').addEventListener('input', function () {
@@ -107,6 +107,7 @@ async function _startProcessing(file) {
     const inp = $('apiKeyInput');
     inp.classList.add('error');
     inp.focus();
+    inp.scrollIntoView({ block: 'center', behavior: 'smooth' });
     return;
   }
 
@@ -509,6 +510,9 @@ function _resetToUpload() {
 $('topbarIcon').addEventListener('click', _resetToUpload);
 $('newFileBtn').addEventListener('click', _resetToUpload);
 $('backBtn').addEventListener('click', _resetToUpload);
+$('startBtn').addEventListener('click', () => {
+  if (_pendingFile) _startProcessing(_pendingFile);
+});
 
 // ═══════════════════════════════════════════════════════════════════
 // UI HELPERS
