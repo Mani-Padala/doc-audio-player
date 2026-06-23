@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doc Audio Player</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════ UPLOAD SCREEN ═══════════ -->
+<div id="uploadScreen" class="screen active">
+  <div class="upload-logo">🎧</div>
+  <div class="upload-hero">
+    <h1>Doc Audio Player</h1>
+    <p>Upload any document. Each section gets explained conversationally — then ask follow-up questions by typing or speaking.</p>
+  </div>
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" accept=".docx,.txt,.md" autocomplete="off">
+    <div class="drop-icon">📄</div>
+    <div class="drop-title">Drop your document here</div>
+    <div class="drop-sub">or click to browse</div>
+    <div class="drop-types">
+      <span class="type-badge">.docx</span>
+      <span class="type-badge">.txt</span>
+      <span class="type-badge">.md</span>
+    </div>
+  </div>
+  <div class="api-key-section">
+    <div class="api-key-label">
+      <span>🔑</span>
+      <span>Groq API Key</span>
+      <a href="https://console.groq.com/keys" target="_blank">Get one free →</a>
+    </div>
+    <input type="password" id="apiKeyInput" class="api-key-input"
+           placeholder="gsk_..." autocomplete="new-password" spellcheck="false">
+    <div class="api-key-note">Memory only — never stored. Cleared on every page refresh.</div>
+  </div>
+</div>
+
+<!-- ═══════════ PROCESSING SCREEN ═══════════ -->
+<div id="processingScreen" class="screen">
+  <div class="proc-icon">✦</div>
+  <div class="proc-title">Preparing your player</div>
+  <div class="proc-sub">Chunking document and building RAG context…</div>
+  <div class="proc-steps">
+    <div class="proc-step" id="step1">
+      <span class="step-icon">📖</span>
+      <span>Reading &amp; chunking document</span>
+      <span class="step-indicator" id="si1"></span>
+    </div>
+    <div class="proc-step" id="step2">
+      <span class="step-icon">🧩</span>
+      <span>Generating table of contents</span>
+      <span class="step-indicator" id="si2"></span>
+    </div>
+    <div class="proc-step" id="step3">
+      <span class="step-icon">▶</span>
+      <span>Building the player</span>
+      <span class="step-indicator" id="si3"></span>
+    </div>
+  </div>
+  <div class="proc-error" id="procError"></div>
+  <button class="back-btn" id="backBtn">← Try again</button>
+</div>
+
+<!-- ═══════════ PLAYER APP ═══════════ -->
+<div id="playerApp" class="screen">
+
+  <div class="topbar">
+    <div class="topbar-icon" id="topbarIcon" title="Load new file">🎧</div>
+    <div>
+      <div class="topbar-title" id="docTitle">Document</div>
+      <div class="topbar-sub" id="docMeta"></div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-label" id="statusLabel">Ready</div>
+      <button class="new-file-btn" id="newFileBtn">+ New file</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-label">Contents</div>
+    </div>
+
+    <div class="main">
+      <div class="content-area">
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">▶</div>
+          <div class="empty-title">Pick a section to begin</div>
+          <div class="empty-sub">Select a topic from the sidebar or hit Play. Each section is explained on demand — then ask questions about it.</div>
+        </div>
+
+        <div id="sectionContent">
+          <div class="section-badge" id="secBadge"></div>
+          <div class="section-heading" id="secHeading"></div>
+          <div class="explanation-box">
+            <div id="explanationText" class="explanation-text"></div>
+          </div>
+
+          <!-- Q&A -->
+          <div class="qa-section">
+            <div class="qa-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              Ask a question about this section
+            </div>
+            <div class="qa-thread" id="qaThread"></div>
+            <div class="qa-input-row">
+              <textarea id="qaInput" class="qa-input" rows="1"
+                placeholder="What did you mean by… / Can you give an example… / How does this relate to…"></textarea>
+              <button class="qa-mic-btn" id="micBtn" title="Ask by voice">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+              </button>
+              <button class="qa-send-btn" id="sendBtn" title="Send">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </div>
+            <div class="tokens-used" id="tokensUsed"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Player bar -->
+      <div class="player">
+        <div class="progress-labels">
+          <span id="timeElapsed">0:00</span>
+          <span id="sectionCount">—</span>
+          <span id="timeTotal">—</span>
+        </div>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progressBar">
+            <div class="progress-thumb"></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="prevBtn" title="Previous">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          </button>
+          <button class="btn play-btn" id="playBtn">
+            <svg id="playIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          <button class="btn" id="nextBtn" title="Next">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg>
+          </button>
+          <div class="now-playing">
+            <div class="np-title" id="npTitle">Not playing</div>
+            <div class="np-sub" id="npSub">Select a section to begin</div>
+          </div>
+          <button class="speed-btn" id="speedBtn">1×</button>
+          <select class="voice-select" id="voiceSelect">
+            <option value="">Default voice</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
