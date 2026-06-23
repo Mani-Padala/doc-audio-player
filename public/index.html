@@ -24,7 +24,7 @@
       <div class="drop-zone" id="dropZone">
         <div class="drop-icon" id="dropIcon">📄</div>
         <div class="drop-title" id="dropTitle">Drop your file here</div>
-        <div class="drop-sub" id="dropSub">or click to browse</div>
+        <div class="drop-sub" id="dropSub">or tap the button below</div>
         <div class="drop-types" id="dropTypes">
           <span class="type-badge">.docx</span>
           <span class="type-badge">.pdf</span>
@@ -32,9 +32,8 @@
           <span class="type-badge">.md</span>
         </div>
       </div>
-      <!-- File input is OUTSIDE the drop zone so it doesn't interfere with drop events -->
-      <label class="browse-btn" for="fileInput">Browse files</label>
-      <input type="file" id="fileInput" accept=".docx,.txt,.md,.pdf" autocomplete="off" style="display:none">
+      <input type="file" id="fileInput" accept=".docx,.txt,.md,.pdf"
+             class="browse-btn" autocomplete="off">
     </div>
 
     <div class="upload-divider"></div>

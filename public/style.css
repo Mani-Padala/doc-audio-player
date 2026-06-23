@@ -99,15 +99,28 @@ body {
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
+/* Style the file input directly as a button */
 .browse-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 8px 18px;
+  padding: 10px 18px;
   background: var(--surface2); border: 1px solid var(--border);
   border-radius: 8px; color: var(--muted);
   font-size: 13px; cursor: pointer; transition: all .15s;
-  align-self: flex-start;
+  align-self: flex-start; width: 100%;
+  font-family: inherit;
 }
 .browse-btn:hover { border-color: var(--accent); color: var(--accent2); }
+/* Override browser default file input styling */
+input[type=file].browse-btn { color: var(--muted); }
+input[type=file].browse-btn::file-selector-button {
+  background: var(--accent); color: white;
+  border: none; border-radius: 6px;
+  padding: 6px 14px; margin-right: 12px;
+  font-size: 13px; cursor: pointer;
+  font-family: inherit;
+}
+input[type=file].browse-btn::file-selector-button:hover {
+  background: var(--accent2);
+}
 
 /* ── API Key ── */
 .api-key-section { width: 100%; display: flex; flex-direction: column; gap: 8px; }
