@@ -55,6 +55,7 @@ const dropZone = $('dropZone');
 const fileInput = $('fileInput');
 let _pendingFile = null; // file selected but not yet processed
 
+// ── Drag & drop onto the drop zone ───────────────────────────────────────────
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
 dropZone.addEventListener('drop', e => {
@@ -62,8 +63,16 @@ dropZone.addEventListener('drop', e => {
   dropZone.classList.remove('drag-over');
   if (e.dataTransfer.files[0]) _fileSelected(e.dataTransfer.files[0]);
 });
+
+// ── Click "Browse files" label triggers the hidden file input ─────────────────
+// (the <label for="fileInput"> in HTML handles this natively)
 fileInput.addEventListener('change', e => {
   if (e.target.files[0]) _fileSelected(e.target.files[0]);
+});
+
+// ── Start button ──────────────────────────────────────────────────────────────
+$('startBtn').addEventListener('click', () => {
+  if (_pendingFile) _startProcessing(_pendingFile);
 });
 
 // Called when a file is picked — show it selected, enable Start button
@@ -491,14 +500,15 @@ function _resetToUpload() {
   fileInput.value = '';
 
   // Reset drop zone UI
-  dropZone.classList.remove('file-selected');
-  $('dropIcon').textContent  = '📄';
-  $('dropTitle').textContent = 'Drop your document here';
-  $('dropSub').textContent   = 'or click to browse';
+  dropZone.classList.remove('file-selected', 'drag-over');
+  $('dropIcon').textContent    = '📄';
+  $('dropTitle').textContent   = 'Drop your file here';
+  $('dropSub').textContent     = 'or click to browse';
   $('dropTypes').style.display = '';
+  fileInput.value              = '';
   const btn = $('startBtn');
   btn.textContent = 'Choose a file to continue';
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.classList.remove('ready');
 
   clearAll();
@@ -510,9 +520,7 @@ function _resetToUpload() {
 $('topbarIcon').addEventListener('click', _resetToUpload);
 $('newFileBtn').addEventListener('click', _resetToUpload);
 $('backBtn').addEventListener('click', _resetToUpload);
-$('startBtn').addEventListener('click', () => {
-  if (_pendingFile) _startProcessing(_pendingFile);
-});
+
 
 // ═══════════════════════════════════════════════════════════════════
 // UI HELPERS

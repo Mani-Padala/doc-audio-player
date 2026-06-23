@@ -51,7 +51,7 @@ body {
 .upload-hero p  { font-size: 14px; color: var(--muted); max-width: 400px; line-height: 1.7; }
 
 .drop-zone {
-  width: 100%; max-width: 480px;
+  width: 100%;
   border: 2px dashed var(--border);
   border-radius: 16px;
   padding: 44px 28px;
@@ -62,7 +62,7 @@ body {
   position: relative;
 }
 .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: var(--active-bg); }
-.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
+
 .drop-icon  { font-size: 38px; margin-bottom: 14px; opacity: .6; }
 .drop-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
 .drop-sub   { font-size: 13px; color: var(--muted); }
@@ -74,22 +74,40 @@ body {
   background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
 }
 
-/* ── Upload steps ── */
-.upload-step {
+/* ── Upload card & steps ── */
+.upload-card {
   width: 100%; max-width: 480px;
-  display: flex; flex-direction: column; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  display: flex; flex-direction: column; gap: 0;
 }
+.upload-step {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 16px 0;
+}
+.upload-step:first-child { padding-top: 0; }
+.upload-step:last-child  { padding-bottom: 0; }
+.upload-divider { height: 1px; background: var(--border); }
 .upload-step-label {
   display: flex; align-items: center; gap: 10px;
   font-size: 13px; font-weight: 600; color: var(--text);
 }
 .step-num {
-  width: 24px; height: 24px; border-radius: 50%;
+  width: 22px; height: 22px; border-radius: 50%;
   background: var(--accent); color: white;
-  font-size: 12px; font-weight: 700;
+  font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
+.browse-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 8px 18px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted);
+  font-size: 13px; cursor: pointer; transition: all .15s;
+  align-self: flex-start;
+}
+.browse-btn:hover { border-color: var(--accent); color: var(--accent2); }
 
 /* ── API Key ── */
 .api-key-section { width: 100%; display: flex; flex-direction: column; gap: 8px; }
