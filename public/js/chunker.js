@@ -41,9 +41,7 @@ async function readPdf(file) {
     if (pageText) pages.push(pageText);
   }
 
-  const fullText = pages.join('
-
-');
+  const fullText = pages.join('\n\n');
   if (!fullText.trim()) {
     throw new Error('PDF has no extractable text — it may be a scanned image. Try a text-based PDF.');
   }
